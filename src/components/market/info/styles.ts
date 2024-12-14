@@ -10,5 +10,8 @@ export const s = StyleSheet.create({
   text: {
     color: colors.gray[500],
     fontSize: 14,
+    fontFamily: fontFamily.regular,
+    lineHeight: 22.4,
+    flex: 1,
   },
 })
