@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
-import { View, Alert } from "react-native"
+import { View, Alert, Text } from "react-native"
 import MapView, { Callout, Marker } from "react-native-maps"
 import * as Location from "expo-location"
+import { router } from "expo-router"
 
 import { api } from "@/services/api"
+import { fontFamily, colors } from "@/styles/theme"
 
 import { Categories, CategoriesProps } from "@/components/categories"
 import { Places } from "@/components/places"
@@ -89,12 +91,17 @@ export default function Home() {
         {markets?.map((item) => (
           <Marker
             key={item.id}
+            title={item.name}
+            description={item.address}
             identifier={item.id}
             coordinate={{
               latitude: item.latitude,
               longitude: item.longitude,
             }}
-          />
+            image={require("@/assets/pin.png")}
+          >
+            <Callout onPress={() => router.navigate(`/market/${item.id}`)} />
+          </Marker>
         ))}
       </MapView>
 
