@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { View, Alert } from "react-native"
-import MapView from "react-native-maps"
+import MapView, { Callout, Marker } from "react-native-maps"
 import * as Location from "expo-location"
 
 import { api } from "@/services/api"
@@ -9,11 +9,16 @@ import { Categories, CategoriesProps } from "@/components/categories"
 import { Places } from "@/components/places"
 import { PlaceProps } from "@/components/place"
 
-type MarketsProps = PlaceProps
+type MarketsProps = PlaceProps & {
+  latitude: number
+  longitude: number
+}
 
 const currentLocation = {
-  latitude: -3.7123263152259547,
-  longitude: -38.5916651728821,
+  latitude: -23.561187293883442,
+  longitude: -46.656451388116494,
+  latitudeDelta: 0.005,
+  longitudeDelta: 0.005,
 }
 
 export default function Home() {
@@ -47,21 +52,7 @@ export default function Home() {
     }
   }
 
-  async function getCurrentLocation() {
-    try {
-      let { granted } = await Location.requestForegroundPermissionsAsync()
-
-      if (granted) {
-        const location = await Location.getCurrentPositionAsync({})
-        console.log(location)
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
   useEffect(() => {
-    getCurrentLocation()
     fetchCategories()
   }, [])
 
@@ -85,7 +76,27 @@ export default function Home() {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
-      />
+      >
+        <Marker
+          identifier="current"
+          coordinate={{
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude,
+          }}
+          image={require("@/assets/location.png")}
+        />
+
+        {markets?.map((item) => (
+          <Marker
+            key={item.id}
+            identifier={item.id}
+            coordinate={{
+              latitude: item.latitude,
+              longitude: item.longitude,
+            }}
+          />
+        ))}
+      </MapView>
 
       <Places data={markets} />
     </View>
